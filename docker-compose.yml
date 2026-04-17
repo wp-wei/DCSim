@@ -1,0 +1,11 @@
+services:
+  mydc:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    working_dir: /workspace
+    volumes:
+      - ./:/workspace
+    environment:
+      BUILDINGS_PATH: /opt/Buildings
+    command: bash -lc "python3 run.py && python3 verify.py"
