@@ -94,6 +94,23 @@ def main() -> None:
             fail(layer, f"OMC returned error for `{expr}`: {result}")
         return result
 
+    installation_dir = send("getInstallationDirectoryPath()", "environment")
+    if not isinstance(installation_dir, str) or not installation_dir:
+        fail("environment", f"Unexpected getInstallationDirectoryPath() response: {installation_dir}")
+
+    buildings_root = buildings_package.parent
+    omlib_dir = Path(installation_dir) / "lib" / "omlibrary"
+    user_lib_dir = Path.home() / ".openmodelica" / "libraries"
+    modelica_path = os.pathsep.join(
+        [omlib_dir.as_posix(), buildings_root.as_posix(), user_lib_dir.as_posix()]
+    )
+
+    if send(f'setModelicaPath("{modelica_path}")', "environment") is not True:
+        fail("environment", f"setModelicaPath failed for: {modelica_path}")
+
+    print(f"[INFO] OpenModelica installation: {installation_dir}")
+    print(f"[INFO] Modelica path: {send('getModelicaPath()', 'environment')}")
+
     print("[INFO] Checking standard Modelica library...")
     if send("loadModel(Modelica)", "modelica-stdlib") is not True:
         fail("modelica-stdlib", "loadModel(Modelica) returned False")
