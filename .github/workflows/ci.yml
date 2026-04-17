@@ -1,0 +1,26 @@
+name: OpenModelica Headless Check
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  simulate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build Docker image
+        run: docker build --pull -t mydc-openmodelica .
+
+      - name: Check omc and OMPython
+        run: |
+          docker run --rm mydc-openmodelica bash -lc 'omc --version'
+          docker run --rm mydc-openmodelica bash -lc 'python3 -c "import OMPython; print(\"ok\")"'
+
+      - name: Run simulation and verification
+        run: |
+          docker run --rm -v "$PWD:/workspace" -w /workspace mydc-openmodelica bash -lc 'python3 run.py'
+          docker run --rm -v "$PWD:/workspace" -w /workspace mydc-openmodelica bash -lc 'python3 verify.py'
