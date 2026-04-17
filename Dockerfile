@@ -5,8 +5,9 @@ FROM openmodelica/openmodelica:v1.26.3-ompython
 ADD https://github.com/lbl-srg/modelica-buildings/archive/refs/tags/v11.1.0.tar.gz /tmp/buildings.tar.gz
 RUN set -eux; \
     tar -xzf /tmp/buildings.tar.gz -C /opt; \
-    mv /opt/modelica-buildings-11.1.0 /opt/Buildings; \
-    rm -f /tmp/buildings.tar.gz
+    mv /opt/modelica-buildings-11.1.0/Buildings /opt/Buildings; \
+    test -f /opt/Buildings/package.mo; \
+    rm -rf /opt/modelica-buildings-11.1.0 /tmp/buildings.tar.gz
 
 ENV BUILDINGS_PATH=/opt/Buildings
 WORKDIR /workspace
