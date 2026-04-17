@@ -70,20 +70,20 @@ docker build --pull -t mydc-openmodelica .
 ### 2) 必須確認コマンド
 
 ```bash
-docker run --rm mydc-openmodelica bash -lc "omc --version"
-docker run --rm mydc-openmodelica bash -lc "python3 -c 'import OMPython; print(\"ok\")'"
+docker run --rm --user "$(id -u):$(id -g)" -e HOME=/tmp -e BUILDINGS_PATH=/opt/Buildings mydc-openmodelica bash -lc "omc --version"
+docker run --rm --user "$(id -u):$(id -g)" -e HOME=/tmp -e BUILDINGS_PATH=/opt/Buildings mydc-openmodelica bash -lc "python3 -c 'import OMPython; print(\"ok\")'"
 ```
 
 ### 3) シミュレーション
 
 ```bash
-docker run --rm -v "$PWD:/workspace" -w /workspace mydc-openmodelica bash -lc "python3 run.py"
+docker run --rm --user "$(id -u):$(id -g)" -e HOME=/tmp -e BUILDINGS_PATH=/opt/Buildings -v "$PWD:/workspace" -w /workspace mydc-openmodelica bash -lc "python3 run.py"
 ```
 
 ### 4) 検証
 
 ```bash
-docker run --rm -v "$PWD:/workspace" -w /workspace mydc-openmodelica bash -lc "python3 verify.py"
+docker run --rm --user "$(id -u):$(id -g)" -e HOME=/tmp -e BUILDINGS_PATH=/opt/Buildings -v "$PWD:/workspace" -w /workspace mydc-openmodelica bash -lc "python3 verify.py"
 ```
 
 結果ファイルはホスト側 `results/SingleRoomDX_res(.mat)` に生成されます。

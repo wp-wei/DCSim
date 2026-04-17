@@ -17,10 +17,10 @@ jobs:
 
       - name: Check omc and OMPython
         run: |
-          docker run --rm mydc-openmodelica bash -lc 'omc --version'
-          docker run --rm mydc-openmodelica bash -lc 'python3 -c "import OMPython; print(\"ok\")"'
+          docker run --rm --user "$(id -u):$(id -g)" -e HOME=/tmp -e BUILDINGS_PATH=/opt/Buildings mydc-openmodelica bash -lc 'omc --version'
+          docker run --rm --user "$(id -u):$(id -g)" -e HOME=/tmp -e BUILDINGS_PATH=/opt/Buildings mydc-openmodelica bash -lc 'python3 -c "import OMPython; print(\"ok\")"'
 
       - name: Run simulation and verification
         run: |
-          docker run --rm -v "$PWD:/workspace" -w /workspace mydc-openmodelica bash -lc 'python3 run.py'
-          docker run --rm -v "$PWD:/workspace" -w /workspace mydc-openmodelica bash -lc 'python3 verify.py'
+          docker run --rm --user "$(id -u):$(id -g)" -e HOME=/tmp -e BUILDINGS_PATH=/opt/Buildings -v "$PWD:/workspace" -w /workspace mydc-openmodelica bash -lc 'python3 run.py'
+          docker run --rm --user "$(id -u):$(id -g)" -e HOME=/tmp -e BUILDINGS_PATH=/opt/Buildings -v "$PWD:/workspace" -w /workspace mydc-openmodelica bash -lc 'python3 verify.py'
